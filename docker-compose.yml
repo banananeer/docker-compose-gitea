@@ -18,6 +18,7 @@ services:
 
   # Open Source File Transfer which also has event notifications
   sftpgo:
+    container_name: sftpgo
     image: drakkan/sftpgo:latest
     volumes:
       - sftpgo-data:/srv/sftpgo
@@ -117,6 +118,9 @@ services:
       # - TRUSTED_CACERTS_DIR=/path/to/my/cacerts # CA certificates in this directory will be trusted by the OS of the nexcloud container (Useful e.g. for LDAPS) See See https://github.com/nextcloud/all-in-one#how-to-trust-user-defiend-certification-authorities-ca
       # - COLLABORA_SECCOMP_DISABLED=false # Setting this to true allows to disable Collabora's Seccomp feature. See https://github.com/nextcloud/all-in-one#how-to-disable-collaboras-seccomp-feature
 
+  kali:
+    container_name: kali
+    image: kalilinux/kali-rolling:arm64
 
 volumes:
   sftpgo-data:
