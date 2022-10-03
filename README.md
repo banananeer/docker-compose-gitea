@@ -48,17 +48,13 @@ For simplicity this example deals with the following domain names:
 - `test1.evgeniy-khyst.com`
 - `test2.evgeniy-khyst.com`
 
-The idea is simple. There are 3 containers:
+The idea is simple. There is 1 container:
 
 - **Nginx**
-- **Certbot** - for obtaining and renewing certificates
-- **Cron** - for triggering certificates renewal once a day
 
 The sequence of actions:
 
 1. Nginx generates self-signed "dummy" certificates to pass ACME challenge for obtaining Let's Encrypt certificates
-2. Certbot waits for Nginx to become ready and obtains certificates
-3. Cron triggers Certbot to try to renew certificates and Nginx to reload configuration daily
 
 ## <a id="1231369e1218613623e1b520c27ce190"></a>Initial setup
 
@@ -100,7 +96,7 @@ For two and more domains separated by space use double quotes (`"`) around the `
 For a single domain double quotes can be omitted:
 
 ```bash
-DOMAINS=test1.evgeniy-khyst.com
+DOMAINS=sftpgo.local
 CERTBOT_EMAILS=info@evgeniy-khyst.com
 ```
 
@@ -296,10 +292,10 @@ docker compose logs -f
   - [`test1.evgeniy-khyst.com.conf`](vhosts/test1.evgeniy-khyst.com.conf) - `server` block configuration for serving static content. Included in `site.conf.tpl` (`include /etc/nginx/vhosts/${domain}.conf;`)
   - [`test2.evgeniy-khyst.com.conf`](vhosts/test2.evgeniy-khyst.com.conf) - `server` block configuration for serving static content. Included in `site.conf.tpl` (`include /etc/nginx/vhosts/${domain}.conf;`)
 - [`html/`](html/)
-  - [`test1.evgeniy-khyst.com/`](html/test1.evgeniy-khyst.com/) - directory mounted as a webroot for `test1.evgeniy-khyst.com`. Configured in `vhosts/test1.evgeniy-khyst.com.conf`
-    - [`index.html`](html/test1.evgeniy-khyst.com/index.html)
-  - [`test2.evgeniy-khyst.com/`](html/test2.evgeniy-khyst.com/) - directory mounted as a webroot for `test2.evgeniy-khyst.com`. Configured in `vhosts/test2.evgeniy-khyst.com.conf`
-    - [`index.html`](html/test2.evgeniy-khyst.com/index.html)
+  - [`test1.evgeniy-khyst.com/`](html/sftpgo.local/) - directory mounted as a webroot for `test1.evgeniy-khyst.com`. Configured in `vhosts/test1.evgeniy-khyst.com.conf`
+    - [`index.html`](html/sftpgo.local/index.html)
+  - [`test2.evgeniy-khyst.com/`](html/mattermost.local/) - directory mounted as a webroot for `test2.evgeniy-khyst.com`. Configured in `vhosts/test2.evgeniy-khyst.com.conf`
+    - [`index.html`](html/mattermost.local/index.html)
 - [`certbot/`](certbot/)
   - [`Dockerfile`](certbot/Dockerfile)
   - [`certbot.sh`](certbot/certbot.sh) - entrypoint script
@@ -354,3 +350,6 @@ docker volume rm nginx_conf
 docker volume create --name=nginx_conf
 docker compose up -d
 ```
+
+#### Docs
+- https://kifarunix.com/create-locally-trusted-ssl-certificates-with-mkcert-on-ubuntu-20-04/

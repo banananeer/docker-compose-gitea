@@ -7,32 +7,18 @@ if [ -z "$DOMAINS" ]; then
   exit 1;
 fi
 
-use_dummy_certificate() {
-  if grep -q "/etc/letsencrypt/live/$1" "/etc/nginx/sites/$1.conf"; then
-    echo "Switching Nginx to use dummy certificate for $1"
-    sed -i "s|/etc/letsencrypt/live/$1|/etc/nginx/sites/ssl/dummy/$1|g" "/etc/nginx/sites/$1.conf"
-  fi
-}
-
-use_lets_encrypt_certificate() {
-  if grep -q "/etc/nginx/sites/ssl/dummy/$1" "/etc/nginx/sites/$1.conf"; then
-    echo "Switching Nginx to use Let's Encrypt certificate for $1"
-    sed -i "s|/etc/nginx/sites/ssl/dummy/$1|/etc/letsencrypt/live/$1|g" "/etc/nginx/sites/$1.conf"
-  fi
-}
+echo "Generating certs"
 
 reload_nginx() {
   echo "Reloading Nginx configuration"
   nginx -s reload
 }
 
-wait_for_lets_encrypt() {
-  until [ -d "/etc/letsencrypt/live/$1" ]; do
-    echo "Waiting for Let's Encrypt certificates for $1"
-    sleep 5s & wait ${!}
-  done
-  use_lets_encrypt_certificate "$1"
-  reload_nginx
+use_dummy_certificate() {
+  if grep -q "/etc/letsencrypt/live/$1" "/etc/nginx/sites/$1.conf"; then
+    echo "Switching Nginx to use dummy certificate for $1"
+    sed -i "s|/etc/letsencrypt/live/$1|/etc/nginx/sites/ssl/dummy/$1|g" "/etc/nginx/sites/$1.conf"
+  fi
 }
 
 if [ ! -f /etc/nginx/sites/ssl/ssl-dhparams.pem ]; then
@@ -43,6 +29,7 @@ fi
 domains_fixed=$(echo "$DOMAINS" | tr -d \")
 for domain in $domains_fixed; do
   echo "Checking configuration for $domain"
+
 
   if [ ! -f "/etc/nginx/sites/$domain.conf" ]; then
     echo "Creating Nginx configuration file /etc/nginx/sites/$domain.conf"
@@ -61,7 +48,6 @@ for domain in $domains_fixed; do
 
   if [ ! -d "/etc/letsencrypt/live/$domain" ]; then
     use_dummy_certificate "$domain"
-    wait_for_lets_encrypt "$domain" &
   else
     use_lets_encrypt_certificate "$domain"
   fi
