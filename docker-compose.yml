@@ -66,6 +66,15 @@ services:
     ports:
       - "222:22"
 
+  vaultwarden:
+    container_name: vaultwarden
+    image: "vaultwarden/server:latest"
+    volumes:
+      - vaultwarden-data:/data
+    ports:
+      - "80"
+
+
 volumes:
   sftpgo-data:
     external: true
@@ -80,4 +89,7 @@ volumes:
     external: true
 
   gitea:
+    external: true
+
+  vaultwarden-data:
     external: true
