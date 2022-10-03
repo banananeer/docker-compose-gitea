@@ -7,8 +7,6 @@ if [ -z "$DOMAINS" ]; then
   exit 1;
 fi
 
-echo "Generating certs"
-
 reload_nginx() {
   echo "Reloading Nginx configuration"
   nginx -s reload
