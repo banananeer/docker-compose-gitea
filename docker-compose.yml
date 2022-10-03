@@ -6,14 +6,9 @@ services:
     env_file:
       - ./config.env
     volumes:
-      - nginx_conf:/etc/nginx/sites
       - ./vhosts:/etc/nginx/vhosts
       - ./html:/var/www/html
     ports:
       - "80:80"
       - "443:443"
     restart: unless-stopped
-
-volumes:
-  nginx_conf:
-    external: true
