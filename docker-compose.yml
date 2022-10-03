@@ -1,4 +1,4 @@
-version: "2"
+version: "3.9"
 
 services:
   nginx:
@@ -12,6 +12,9 @@ services:
       - "80:80"
       - "443:443"
     restart: unless-stopped
+    depends_on:
+      - sftpgo
+      - mattermost
 
   sftpgo:
     image: drakkan/sftpgo:latest
@@ -19,9 +22,44 @@ services:
       - sftpgo-data:/srv/sftpgo
       - sftpgo-config:/var/lib/sftpgo
 
+  mattermost:
+    container_name: mattermost
+    image: mattermost/mattermost-enterprise-edition
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 200
+    volumes:
+      - mattermost:/mattermost
+    environment:
+      - MM_SQLSETTINGS_DRIVERNAME
+      - MM_SQLSETTINGS_DATASOURCE=postgres://mmuser:mmuser_password@mattermost-db:5432/mattermost?sslmode=disable&connect_timeout=10
+      - MM_BLEVESETTINGS_INDEXDIR
+      - MM_SERVICESETTINGS_SITEURL=https://mattermost
+    depends_on:
+      - mattermost-db
+
+  mattermost-db:
+    container_name: mattermost-db
+    image: postgres:alpine
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 100
+    volumes:
+      - mattermost-db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=mmuser
+      - POSTGRES_PASSWORD=mmuser_password
+      - POSTGRES_DB=mattermost
+
 volumes:
   sftpgo-data:
     external: true
 
   sftpgo-config:
+    external: true
+
+  mattermost:
+    external: true
+
+  mattermost-db:
     external: true
