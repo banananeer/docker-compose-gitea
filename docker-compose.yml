@@ -53,6 +53,7 @@ services:
       - POSTGRES_PASSWORD=mmuser_password
       - POSTGRES_DB=mattermost
 
+  # Open Source Version Control
   gitea:
     image: gitea/gitea:1.17.1
     container_name: gitea
