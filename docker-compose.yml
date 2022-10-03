@@ -12,3 +12,16 @@ services:
       - "80:80"
       - "443:443"
     restart: unless-stopped
+
+  sftpgo:
+    image: drakkan/sftpgo:latest
+    volumes:
+      - sftpgo-data:/srv/sftpgo
+      - sftpgo-config:/var/lib/sftpgo
+
+volumes:
+  sftpgo-data:
+    external: true
+
+  sftpgo-config:
+    external: true
