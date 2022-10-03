@@ -294,8 +294,8 @@ docker compose logs -f
 - [`html/`](html/)
   - [`test1.evgeniy-khyst.com/`](html/sftpgo.local/) - directory mounted as a webroot for `test1.evgeniy-khyst.com`. Configured in `vhosts/test1.evgeniy-khyst.com.conf`
     - [`index.html`](html/sftpgo.local/index.html)
-  - [`test2.evgeniy-khyst.com/`](html/mattermost.local/) - directory mounted as a webroot for `test2.evgeniy-khyst.com`. Configured in `vhosts/test2.evgeniy-khyst.com.conf`
-    - [`index.html`](html/mattermost.local/index.html)
+  - [`test2.evgeniy-khyst.com/`](html/homellc.local/) - directory mounted as a webroot for `test2.evgeniy-khyst.com`. Configured in `vhosts/test2.evgeniy-khyst.com.conf`
+    - [`index.html`](html/homellc.local/index.html)
 - [`certbot/`](certbot/)
   - [`Dockerfile`](certbot/Dockerfile)
   - [`certbot.sh`](certbot/certbot.sh) - entrypoint script
