@@ -16,12 +16,14 @@ services:
       - sftpgo
       - mattermost
 
+  # Open Source File Transfer which also has event notifications
   sftpgo:
     image: drakkan/sftpgo:latest
     volumes:
       - sftpgo-data:/srv/sftpgo
       - sftpgo-config:/var/lib/sftpgo
 
+  # Chat and Productivity (Open Source Slack)
   mattermost:
     container_name: mattermost
     image: mattermost/mattermost-enterprise-edition
@@ -51,6 +53,18 @@ services:
       - POSTGRES_PASSWORD=mmuser_password
       - POSTGRES_DB=mattermost
 
+  gitea:
+    image: gitea/gitea:1.17.1
+    container_name: gitea
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+    restart: always
+    volumes:
+      - gitea:/data
+    ports:
+      - "222:22"
+
 volumes:
   sftpgo-data:
     external: true
@@ -62,4 +76,7 @@ volumes:
     external: true
 
   mattermost-db:
+    external: true
+
+  gitea:
     external: true
