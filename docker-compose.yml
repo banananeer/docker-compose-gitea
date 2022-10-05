@@ -87,6 +87,34 @@ services:
     networks:
       - homellc
 
+  keycloak-db:
+    image: postgres
+    container_name: keycloak-db
+    volumes:
+      - keycloak:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+    networks:
+      - homellc
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:19.0.2
+    container_name: keycloak
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: password
+      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
+      #JDBC_PARAMS: "ssl=true"
+#    ports:
+#      - 8080:8080
+    depends_on:
+      - postgres
+    networks:
+      - homellc
+
 volumes:
   sftpgo-data:
     external: true
@@ -109,6 +137,9 @@ volumes:
   nextcloud:
     external: true
     name: nextcloud_aio_mastercontainer
+
+  keycloak:
+    external: true
 
 networks:
   homellc:
