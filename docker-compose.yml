@@ -15,7 +15,8 @@ services:
     depends_on:
       - sftpgo
       - mattermost
-
+      - gitea
+      - vaultwarden
   # Open Source File Transfer which also has event notifications
   sftpgo:
     container_name: sftpgo
@@ -71,54 +72,31 @@ services:
     container_name: vaultwarden
     image: "vaultwarden/server:latest"
     volumes:
-      - vaultwarden-data:/data
-
-  pihole:
-    container_name: pihole
-    image: pihole/pihole:latest
-    # For DHCP it is recommended to remove these ports and instead add: network_mode: "host"
-    ports:
-      - "53:53/tcp"
-      - "53:53/udp"
-      - "67:67/udp"
-    environment:
-      TZ: 'America/Atlanta'
-      WEBPASSWORD: 'set a secure password here or it will be random'
-    # Volumes store your data between container upgrades
-    volumes:
-      - pihole-etc:/etc/pihole
-      - pihold-dnsmasq.d:/etc/dnsmasq.d
-    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
-    cap_add:
-      - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
-    restart: unless-stopped
+      - vaultwarden:/data
 
 volumes:
   sftpgo-data:
-    external: false
+    external: true
 
   sftpgo-config:
-    external: false
+    external: true
 
   mattermost:
-    external: false
+    external: true
 
   mattermost-db:
-    external: false
+    external: true
 
   gitea:
-    external: false
+    external: true
 
-  vaultwarden-data:
-    external: false
-
-  pihole-etc:
-    external: false
-
-  pihold-dnsmasq.d:
-    external: false
-
+  vaultwarden:
+    external: true
 
   nextcloud:
-    external: false
+    external: true
     name: nextcloud_aio_mastercontainer
+
+networks:
+  homellc:
+    external: true
