@@ -17,6 +17,9 @@ services:
       - mattermost
       - gitea
       - vaultwarden
+    networks:
+      - homellc
+
   # Open Source File Transfer which also has event notifications
   sftpgo:
     container_name: sftpgo
@@ -24,6 +27,8 @@ services:
     volumes:
       - sftpgo-data:/srv/sftpgo
       - sftpgo-config:/var/lib/sftpgo
+    networks:
+      - homellc
 
   # Chat and Productivity (Open Source Slack)
   mattermost:
@@ -41,6 +46,8 @@ services:
       - MM_SERVICESETTINGS_SITEURL=https://mattermost
     depends_on:
       - mattermost-db
+    networks:
+      - homellc
 
   mattermost-db:
     container_name: mattermost-db
@@ -54,6 +61,8 @@ services:
       - POSTGRES_USER=mmuser
       - POSTGRES_PASSWORD=mmuser_password
       - POSTGRES_DB=mattermost
+    networks:
+      - homellc
 
   # Open Source Version Control
   gitea:
@@ -67,12 +76,16 @@ services:
       - gitea:/data
     ports:
       - "222:22"
+    networks:
+      - homellc
 
   vaultwarden:
     container_name: vaultwarden
     image: "vaultwarden/server:latest"
     volumes:
       - vaultwarden:/data
+    networks:
+      - homellc
 
 volumes:
   sftpgo-data:
