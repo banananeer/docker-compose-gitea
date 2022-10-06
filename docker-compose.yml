@@ -3,6 +3,7 @@ version: "3.9"
 services:
   nginx:
     build: ./nginx
+    restart: unless-stopped
     env_file:
       - ./config.env
     volumes:
@@ -13,58 +14,8 @@ services:
       - "443:443"
     restart: unless-stopped
     depends_on:
-      - sftpgo
-      - mattermost
       - gitea
-      - vaultwarden
-    networks:
-      - homellc
-
-  # Open Source File Transfer which also has event notifications
-  sftpgo:
-    container_name: sftpgo
-    image: drakkan/sftpgo:latest
-    volumes:
-      - sftpgo-data:/srv/sftpgo
-      - sftpgo-config:/var/lib/sftpgo
-    networks:
-      - homellc
-
-  # Chat and Productivity (Open Source Slack)
-  mattermost:
-    container_name: mattermost
-    image: mattermost/mattermost-enterprise-edition
-    security_opt:
-      - no-new-privileges:true
-    pids_limit: 200
-    volumes:
-      - mattermost:/mattermost
-    environment:
-      - MM_SQLSETTINGS_DRIVERNAME
-      - MM_SQLSETTINGS_DATASOURCE=postgres://mmuser:mmuser_password@mattermost-db:5432/mattermost?sslmode=disable&connect_timeout=10
-      - MM_BLEVESETTINGS_INDEXDIR
-      - MM_SERVICESETTINGS_SITEURL=https://mattermost
-    depends_on:
-      - mattermost-db
-    networks:
-      - homellc
-
-  mattermost-db:
-    container_name: mattermost-db
-    image: postgres:alpine
-    security_opt:
-      - no-new-privileges:true
-    pids_limit: 100
-    volumes:
-      - mattermost-db:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=mmuser
-      - POSTGRES_PASSWORD=mmuser_password
-      - POSTGRES_DB=mattermost
-    networks:
-      - homellc
-
-  # Open Source Version Control
+  
   gitea:
     image: gitea/gitea:1.17.1
     container_name: gitea
@@ -76,71 +27,7 @@ services:
       - gitea:/data
     ports:
       - "222:22"
-    networks:
-      - homellc
-
-  vaultwarden:
-    container_name: vaultwarden
-    image: "vaultwarden/server:latest"
-    volumes:
-      - vaultwarden:/data
-    networks:
-      - homellc
-
-  keycloak-db:
-    image: postgres
-    container_name: keycloak-db
-    volumes:
-      - keycloak:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: keycloak
-      POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: password
-    networks:
-      - homellc
-
-  keycloak:
-    image: quay.io/keycloak/keycloak:19.0.2
-    container_name: keycloak
-    command: start-dev
-    environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: password
-      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
-      #JDBC_PARAMS: "ssl=true"
-#    ports:
-#      - 8080:8080
-    depends_on:
-      - postgres
-    networks:
-      - homellc
 
 volumes:
-  sftpgo-data:
-    external: true
-
-  sftpgo-config:
-    external: true
-
-  mattermost:
-    external: true
-
-  mattermost-db:
-    external: true
-
   gitea:
-    external: true
-
-  vaultwarden:
-    external: true
-
-  nextcloud:
-    external: true
-    name: nextcloud_aio_mastercontainer
-
-  keycloak:
-    external: true
-
-networks:
-  homellc:
     external: true
