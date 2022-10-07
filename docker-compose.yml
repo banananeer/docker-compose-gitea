@@ -1,33 +1,24 @@
-version: "3.9"
+version: "3"
+
+networks:
+  gitea:
+    external: false
 
 services:
-  nginx:
-    build: ./nginx
-    restart: unless-stopped
-    env_file:
-      - ./config.env
-    volumes:
-      - ./vhosts:/etc/nginx/vhosts
-      - ./html:/var/www/html
-    ports:
-      - "80:80"
-      - "443:443"
-    restart: unless-stopped
-    depends_on:
-      - gitea
-  
-  gitea:
+  server:
     image: gitea/gitea:1.17.1
     container_name: gitea
     environment:
       - USER_UID=1000
       - USER_GID=1000
     restart: always
+    networks:
+      - gitea
     volumes:
-      - gitea:/data
+      - ./gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     ports:
+      - "3000:3000"
       - "222:22"
 
-volumes:
-  gitea:
-    external: true
